@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: backend
+    container_name: backend
+    restart: no
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - WEBSITE_URL=${WEBSITE_URL}
+      - ANCHOR_ELEMENT=${ANCHOR_ELEMENT}
+      - ITERATIVE_CLASS=${ITERATIVE_CLASS}
+      - NAME_CLASS=${NAME_CLASS}
+      - AREAS_CLASS=${AREAS_CLASS}
+      - URL_CLASS=${URL_CLASS}
+      - PAGINATE_CLASS=${PAGINATE_CLASS}
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
